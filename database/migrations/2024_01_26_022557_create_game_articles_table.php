@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('game_articles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger("articles_id");
+            $table->string("title");
             $table->timestamps();
         });
     }

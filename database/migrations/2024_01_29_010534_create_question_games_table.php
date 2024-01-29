@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('question_games', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger("games_id");
+            $table->bigInteger("game_articles_id");
             $table->string("title");
             $table->string("img-question");
             $table->string("answer");
