@@ -17,8 +17,8 @@ return new class extends Migration
             $table->integer('age');
             $table->string('email')->unique();
             $table->string('password');
-            $table->string("img_profile");
-            $table->integer("poin");
+            $table->string("img_profile")->default("");
+            $table->integer("poin")->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

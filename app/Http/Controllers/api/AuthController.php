@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
-
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Validator;
-use Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -25,12 +25,13 @@ class AuthController extends Controller
         if($validator->fails()){
             return response()->json([
                 'succes'=>false,
-                'message'=>'salah',
+                'message'=>'Format Salah',
                 'data'=>$validator->errors()
             ]);
         }
+
         $input = $request->all();
-        $input['password']= bcrypt($input['password']);
+        $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
 
         // buat token
@@ -49,11 +50,6 @@ class AuthController extends Controller
     }
 
     public function login(Request $request){
-
-        //NYOBA
-        // $validator = Validator::make($request ->all(),[
-        //      'email' => 'required']);
-        //NYOBA
 
         if(Auth::attempt(['email'=> $request->email,'password' =>$request->password])){
             $auth = Auth::user();
