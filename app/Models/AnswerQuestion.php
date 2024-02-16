@@ -5,14 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class QuestionGame extends Model
+class AnswerQuestion extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'game_articles_id',
-        'title',
-        'img_question',
+        'game_question_id',
         'answer',
         'is_correct',
     ];
@@ -23,8 +21,8 @@ class QuestionGame extends Model
     
     protected $casts = [];
 
-    public function gameArticle() {
-        return $this->belongsTo(GamesArticle::class);
+    public function gameQuestion() {
+        return $this->belongsTo(GameQuestion::class);
     }
 
     public function gameHistories() {

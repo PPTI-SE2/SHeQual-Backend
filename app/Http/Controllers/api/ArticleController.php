@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\ResponseFormatter;
 use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -21,12 +22,22 @@ class ArticleController extends Controller
         if($ArticleID){ 
             $article = Article::find($ArticleID);
             if($article){
-                return $article;
+                return ResponseFormatter::success(
+                    $article,
+                    "Artikel ditemukan"
+                );
             }else{
-                return null;
+                return ResponseFormatter::error(
+                    null,
+                    "Artikel gagal ditemukan",
+                    404
+                );
             }
         }
 
-        return Article::all();
+        return ResponseFormatter::success(
+            Article::all(),
+            "Data artikel berhasil diambil"
+        );
     }
 }

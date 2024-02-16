@@ -23,7 +23,7 @@ class GameHistory extends Model
     protected $casts = [];
 
     public function questionGame() {
-        return $this->belongsTo(QuestionGame::class);
+        return $this->belongsTo(AnswerQuestion::class);
     }
 
     public function user() {

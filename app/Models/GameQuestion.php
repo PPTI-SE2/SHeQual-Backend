@@ -5,14 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class GameArticle extends Model
+class GameQuestion extends Model
 {
     use HasFactory;
 
 
     protected $fillable = [
         'articles_id',
-        'title',
+        'question',
+        'img_question'
     ];
 
     protected $hidden = [
@@ -23,5 +24,9 @@ class GameArticle extends Model
 
     public function article() {
         return $this->belongsTo(Article::class);
+    }
+
+    public function questions() {
+        return $this->hasMany(AnswerQuestion::class);
     }
 }
