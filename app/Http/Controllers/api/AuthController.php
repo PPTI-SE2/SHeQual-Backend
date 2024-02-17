@@ -66,9 +66,6 @@ class AuthController extends Controller
             ]);
 
         }else{
-
-            //  $validator = Validator::make($request ->all(),[
-            //  'email' => 'required']);
                 return response()->json([
                 'succes'=>false,
                 'message'=>'Password Salah, Cek Lagi',

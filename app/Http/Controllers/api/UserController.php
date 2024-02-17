@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use Auth; #coba
 
 class UserController extends Controller
 {
@@ -22,4 +23,16 @@ class UserController extends Controller
 
         return response()->json($data);
     }
+
+    public function profile(User $user){
+        $user  = $user -> find(Auth::user()->id);
+
+         return response()->json([
+            'name' => $user->name,
+            'username' => $user->username,
+            'age' => $user->age
+        ]);
+
+    }
+
 }

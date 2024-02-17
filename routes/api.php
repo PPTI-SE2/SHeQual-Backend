@@ -27,3 +27,5 @@ Route::get('/articles', [ArticleController::class, 'getArticle']);
 Route::get('/games', [GameController::class, 'getGame']);
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/profile', [UserController::class, 'profile'])->middleware('auth:api');
+
