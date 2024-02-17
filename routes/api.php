@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\GameController;
 use App\Http\Controllers\API\ArticleController;
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\PostController;
+use App\Http\Controllers\API\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,5 +22,8 @@ use App\Http\Controllers\API\AuthController;
 
 Route::post('/register',[AuthController::class, 'register']);
 Route::post('/login',[AuthController::class, 'login']);
+Route::post('/posts',[PostController::class, 'store']);
 Route::get('/articles', [ArticleController::class, 'getArticle']);
 Route::get('/games', [GameController::class, 'getGame']);
+Route::get('/posts', [PostController::class, 'index']);
+Route::get('/users', [UserController::class, 'index']);
