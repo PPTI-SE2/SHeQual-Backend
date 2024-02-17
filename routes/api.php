@@ -23,6 +23,8 @@ use App\Http\Controllers\API\UserController;
 Route::post('/register',[AuthController::class, 'register']);
 Route::post('/login',[AuthController::class, 'login']);
 Route::post('/posts',[PostController::class, 'store']);
+Route::post('/{id}/comments', [PostController::class, 'storeComment']);
+
 Route::get('/articles', [ArticleController::class, 'getArticle']);
 Route::get('/games', [GameController::class, 'getGame']);
 Route::get('/posts', [PostController::class, 'index']);
