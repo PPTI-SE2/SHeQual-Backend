@@ -66,6 +66,7 @@ class AuthController extends Controller
             ]);
 
         }else{
+
                 return response()->json([
                 'succes'=>false,
                 'message'=>'Password Salah, Cek Lagi',
