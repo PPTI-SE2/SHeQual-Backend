@@ -13,7 +13,10 @@ class PostController extends Controller
 {
     public function index(){
         $posts = Post::all();
-        return response()->json($posts);
+        return ResponseFormatter::success(
+            $posts,
+            "Data Post berhasil didapatkan",
+        );
     }
 
     public function store(Request $request)

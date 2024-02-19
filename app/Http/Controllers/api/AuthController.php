@@ -42,7 +42,8 @@ class AuthController extends Controller
         return response()->json([
             'succes'=> true,
             'message'=> 'sukses bang congcrats',
-            'data'=> $succes
+            'data' => $user,
+            'token' => $succes["token"]
         ])->withHeaders([
                 'X-CSRF-TOKEN' => csrf_token()
             ]);
@@ -53,14 +54,14 @@ class AuthController extends Controller
 
         if(Auth::attempt(['email'=> $request->email,'password' =>$request->password])){
             $auth = Auth::user();
-            $success['token'] = $auth->createToken('auth_token')->plainTextToken;
-            $success['name'] =$auth->name;
+            $token = $auth->createToken('auth_token')->plainTextToken;
 
 
             return response()->json([
-                'succes'=>true,
-                'message'=>'Login sukses',
-                'data'=>$success
+                'succes' => true,
+                'message' => 'Login sukses',
+                'data' => $auth,
+                'token' => $token,
             ])->withHeaders([
                 'X-CSRF-TOKEN' => csrf_token()
             ]);
