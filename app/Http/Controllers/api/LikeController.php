@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\ResponseFormatter;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\User;
@@ -28,7 +29,7 @@ class LikeController extends Controller
             $like->delete();
             return response()->json([
                 'message' => 'You have Unliked a Post',
-            ], 200);
+            ], 201);
         }else{
             $like = new Like();
             $like->users_id = $user->id;
@@ -48,4 +49,21 @@ class LikeController extends Controller
         }
     }
     
+
+    public function checkLike($posts_id, $users_id) {
+        $posts = Like::with('user')->where('posts_id', $posts_id)->where('users_id', $users_id)->first();
+
+        if($posts) {
+            return ResponseFormatter::success(
+                true,
+                "Postingan telah di like"
+            );
+        }
+
+        return ResponseFormatter::error(
+            false,
+            "Postingan tidak ditemukan",
+            404,
+        );
+    }
 }
