@@ -17,21 +17,21 @@ class PostController extends Controller
 
         $data = $posts->map(function ($post){
             return[
-                 'PostID' => $post->id,
-                 'Title'     => $post->title,
-                 'IMG'       => $post->img_post,
-                 'Content'   => $post->content,
-                 'Username'  => $post->user->username,
-                 'UserID'    => $post->user->id,
-                 'CreatedAt' => $post->created_at,
-                 'Comments' => $post->comments->map(function ($comment) {
+                 'post_id' => $post->id,
+                 'title'     => $post->title,
+                 'img_post'  => $post->img_post,
+                 'content'   => $post->content,
+                 'username'  => $post->user->username,
+                 'user_id'    => $post->user->id,
+                 'created_at' => $post->created_at,
+                 'comments' => $post->comments->map(function ($comment) {
                     return [
-                        'Comment_ID' => $comment->id,
-                        'PostID' => $comment->posts_id,
-                        'Username' => $comment->user->username,
-                        'UserID' => $comment->user->id,
-                        'Details' => $comment->details,
-                        'CreatedAt' => $comment->created_at,
+                        'comment_id' => $comment->id,
+                        'post_id' => $comment->posts_id,
+                        'username' => $comment->user->username,
+                        'user_iD' => $comment->user->id,
+                        'details' => $comment->details,
+                        'created_at' => $comment->created_at,
                     ];
                 }),
             ];
