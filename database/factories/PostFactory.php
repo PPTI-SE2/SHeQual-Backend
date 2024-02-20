@@ -19,7 +19,7 @@ class PostFactory extends Factory
     {
         return [
             'users_id' => fake()->numberBetween(1,User::count()),
-            'title' => fake()->title,
+            'title' => fake()->sentence(2),
             'content' => fake()->sentence(),
             'img_post' => fake()->imageUrl
         ];

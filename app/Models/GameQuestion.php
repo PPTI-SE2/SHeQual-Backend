@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class GameQuestion extends Model
 {
@@ -22,11 +24,11 @@ class GameQuestion extends Model
     
     protected $casts = [];
 
-    public function article() {
+    public function article():BelongsTo{
         return $this->belongsTo(Article::class);
     }
 
-    public function questions() {
+    public function questions():HasMany{
         return $this->hasMany(AnswerQuestion::class);
     }
 }

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Like extends Model
 {
@@ -20,11 +22,11 @@ class Like extends Model
     
     protected $casts = [];
 
-    public function user() {
-        return $this->belongsTo(User::class);
+    public function user(): BelongsTo {
+        return $this->belongsTo(User::class, 'users_id');
     }
 
-    public function post() {
-        return $this->hasMany(Post::class);
+    public function post(): BelongsTo {
+        return $this->belongsTo(Post::class, 'posts_id');
     }
 }

@@ -11,18 +11,17 @@ use App\Models\Comment;
 
 class PostController extends Controller
 {
-    public function index(){
-        $posts = Post::all();
-        return ResponseFormatter::success(
-            $posts,
-            "Data Post berhasil didapatkan",
-        );
+
+    public function showPostComment(){
+        $posts = Post::with('comments')->get();
+        return ResponseFormatter::success($posts, 'sukses brody');
     }
 
     public function store(Request $request)
     {
         //define validation rules
         $validator = Validator::make($request->all(), [
+            'user_id'   => 'required',
             'image'     => 'required',
             'title'     => 'required',
             'content'   => 'required',
@@ -30,42 +29,37 @@ class PostController extends Controller
 
         //check if validation fails
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return ResponseFormatter::error($validator->errors(), 'ditolak validasi', 422);
         }
 
         //create post
         $post = Post::create([
-            'users_id'  => '1',
+            'users_id'  => $request->user_id,
             'img_post'  => $request->image,
             'title'     => $request->title,
             'content'   => $request->content,
         ]);
         
-        return response()->json($post);        
+        return ResponseFormatter::success($post, 'sukses bro');        
     }
 
-    public function storeComment(Request $req, $id){
-        $post = Post::find($id);        
+    public function storeComment(Request $req){        
         
         $validator = Validator::make($req->all(), [
+            'user_id' => 'required',
+            'post_id' => 'required',
             'details' => 'required', 'min:3', 'max:50'
         ]);
         
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return ResponseFormatter::error($validator->errors(), 'ditolak validasi', 422);
         }
 
         $user = Comment::create([            
-            'users_id' => '1',
-            'posts_id' => $id,
+            'users_id' => $req->user_id,
+            'posts_id' => $req->post_id,
             'details' => $req->details
         ]);
-
-        // $comments = Comment::where('posts_id', $id)->get();
-        // $data = array(
-        //     'post' => $post,
-        //     'comments' => $comments,
-        // );
 
         return ResponseFormatter::success(
             $user,

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\ResponseFormatter;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -21,7 +22,7 @@ class UserController extends Controller
            ];
         });
 
-        return response()->json($data);
+        return ResponseFormatter::success($data, 'mantap');
     }
 
     public function profile(User $user){
