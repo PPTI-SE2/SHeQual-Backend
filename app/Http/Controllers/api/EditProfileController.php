@@ -4,20 +4,31 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\users;
 
 class EditProfileController extends Controller
 {
-    public function edit()
+
+    public function update(Request $request, $id)
     {
-        $user = Auth::user();
-        return view('profile.edit', compact('user'));
+        $data = $request->validate([
+            'name' => 'required|max 50',
+            'email'=> 'required|max 50',
+            'password'=> 'nullable|max 8' //bisa kosong
+        ]);
+
+        if($request->password != ' '){
+            $data['password'] = bcrypt($request->password);
+        }else{
+            unset($data['password']);
+        }
+
+        $user = auth() -> user();
+        $user->fill($data);
+        $user->save();
+        flash('U did it :)')->success();
+        return back();
+
     }
 
-    public function update(Request $request)
-    {
-        $user = Auth::user();
-        $user->update($request->only(['name', 'email'])); // Sesuaikan dengan kolom yang ingin diubah
-
-        return redirect('/profile/edit')->with('success', 'Profile updated successfully');
-    }
 }

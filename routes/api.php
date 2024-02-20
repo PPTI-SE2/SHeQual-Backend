@@ -7,7 +7,6 @@ use App\Http\Controllers\API\GameController;
 use App\Http\Controllers\API\LikeController;
 use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\UserController;
-use App\Http\Controllers\API\ArticleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +29,10 @@ Route::get('/check-like/{posts_id}/{users_id}', [LikeController::class, 'checkLi
 
 Route::get('/articles', [ArticleController::class, 'getArticle']);
 Route::get('/games', [GameController::class, 'getGame']);
-Route::get('/posts', [PostController::class, 'showPostComment']);
+Route::get('/posts', [PostController::class, 'index']);
 Route::get('/users', [UserController::class, 'index']);
-Route::get('/users/profile', [UserController::class, 'profile'])->middleware('auth:api');
+Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:api');
+
+// ini buat update dan edit user
+Route::put('/profile/update/{id}', [EditProfileController::class, 'update']);
 
