@@ -13,7 +13,7 @@ class PostController extends Controller
 {
 
     public function showPostComment(){
-        $posts = Post::with('comments.user', 'user')->get();
+        $posts = Post::with('comments.user', 'user', 'likes')->get();
 
         $data = $posts->map(function ($post){
             return[
@@ -25,6 +25,7 @@ class PostController extends Controller
                  'username'  => $post->user->username,
                  'user_id'    => $post->user->id,
                  'created_at' => $post->created_at,
+                 'likes'    => count($post->likes),                 
                  'comments' => $post->comments->map(function ($comment) {
                     return [
                         'comment_id' => $comment->id,
