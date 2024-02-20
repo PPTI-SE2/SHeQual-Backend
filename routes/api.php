@@ -36,5 +36,5 @@ Route::get('/users', [UserController::class, 'index']);
 Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:api');
 
 // ini buat update dan edit user
-Route::put('/profile/update/{id}', [EditProfileController::class, 'update']);
+Route::put('/profile/update', [EditProfileController::class, 'update']);
 
