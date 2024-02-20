@@ -13,8 +13,31 @@ class PostController extends Controller
 {
 
     public function showPostComment(){
-        $posts = Post::with('comments')->get();
-        return ResponseFormatter::success($posts, 'sukses brody');
+        $posts = Post::with('comments.user', 'user')->get();
+
+        $data = $posts->map(function ($post){
+            return[
+                 'PostID' => $post->id,
+                 'Title'     => $post->title,
+                 'IMG'       => $post->img_post,
+                 'Content'   => $post->content,
+                 'Username'  => $post->user->username,
+                 'UserID'    => $post->user->id,
+                 'CreatedAt' => $post->created_at,
+                 'Comments' => $post->comments->map(function ($comment) {
+                    return [
+                        'Comment_ID' => $comment->id,
+                        'PostID' => $comment->posts_id,
+                        'Username' => $comment->user->username,
+                        'UserID' => $comment->user->id,
+                        'Details' => $comment->details,
+                        'CreatedAt' => $comment->created_at,
+                    ];
+                }),
+            ];
+         });
+
+        return ResponseFormatter::success($data, 'sukses brody');
     }
 
     public function store(Request $request)
