@@ -31,7 +31,7 @@ class PostController extends Controller
                         'post_id' => $comment->posts_id,
                         'img_profile' => $comment->user->img_profile,
                         'username' => $comment->user->username,
-                        'user_iD' => $comment->user->id,
+                        'user_id' => $comment->user->id,
                         'details' => $comment->details,
                         'created_at' => $comment->created_at,
                     ];
