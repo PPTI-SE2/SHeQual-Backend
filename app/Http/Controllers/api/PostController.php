@@ -21,6 +21,7 @@ class PostController extends Controller
                  'title'     => $post->title,
                  'img_post'  => $post->img_post,
                  'content'   => $post->content,
+                 'img_profile' => $post->user->img_profile,
                  'username'  => $post->user->username,
                  'user_id'    => $post->user->id,
                  'created_at' => $post->created_at,
@@ -28,6 +29,7 @@ class PostController extends Controller
                     return [
                         'comment_id' => $comment->id,
                         'post_id' => $comment->posts_id,
+                        'img_profile' => $comment->user->img_profile,
                         'username' => $comment->user->username,
                         'user_iD' => $comment->user->id,
                         'details' => $comment->details,
