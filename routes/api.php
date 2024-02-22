@@ -20,7 +20,7 @@ use App\Http\Controllers\API\UserController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
+//test
 
 Route::post('/register',[AuthController::class, 'register']);
 Route::post('/login',[AuthController::class, 'login']);
