@@ -21,7 +21,7 @@ class PostFactory extends Factory
             'users_id' => fake()->numberBetween(1,User::count()),
             'title' => fake()->sentence(2),
             'content' => fake()->sentence(),
-            'img_post' => fake()->imageUrl
+            'img_post' => null
         ];
     }
 }

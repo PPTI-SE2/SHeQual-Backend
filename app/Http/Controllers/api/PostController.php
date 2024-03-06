@@ -8,6 +8,8 @@ use App\Models\Post;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
+use Faker\Core\File;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -47,10 +49,10 @@ class PostController extends Controller
     {
         //define validation rules
         $validator = Validator::make($request->all(), [
-            'user_id'   => 'required',
-            'image'     => 'required',
-            'title'     => 'required',
-            'content'   => 'required',
+            'user_id' => 'required',
+            'title' => 'required',
+            'content' => 'required',
+            'img_post' => 'nullable|image'
         ]);
 
         //check if validation fails
@@ -60,12 +62,20 @@ class PostController extends Controller
 
         //create post
         $post = Post::create([
-            'users_id'  => $request->user_id,
-            'img_post'  => $request->image,
+            'users_id'  => $request->user_id,            
             'title'     => $request->title,
             'content'   => $request->content,
+            'img_post'  => $request->img_post
         ]);
         
+        if ($request->hasFile('img_post')) {
+            $fileName = uniqid('post_') . '.' . $request->file('img_post')->getClientOriginalExtension();
+            $path = Storage::putFileAs('images', $request->file('img_post'), $fileName);
+                
+            $post->img_post = $path;
+            $post->save();
+        }
+
         return ResponseFormatter::success($post, 'sukses bro');        
     }
 
@@ -91,5 +101,11 @@ class PostController extends Controller
             $user,
             "Komentar baru berhasi ditambahkan"
         );
+    }
+
+    public static function quickRandom($length = 12){
+    $pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    return substr(str_shuffle(str_repeat($pool, $length)), 0, $length);
     }
 }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->bigInteger("users_id");
             $table->string("title");
             $table->string("content");
-            $table->string("img_post");
+            $table->string("img_post")->nullable();
             $table->timestamps();
         });
     }
