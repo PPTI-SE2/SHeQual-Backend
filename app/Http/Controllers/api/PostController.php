@@ -15,7 +15,7 @@ class PostController extends Controller
 {
 
     public function showPostComment(){
-        $posts = Post::with('comments.user', 'user', 'likes')->get();
+        $posts = Post::with('comments.user', 'user', 'likes')->orderBy("updated_at", "DESC")->get();
 
         $data = $posts->map(function ($post){
             return[
