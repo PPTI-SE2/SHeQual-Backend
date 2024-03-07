@@ -25,6 +25,7 @@ use App\Http\Controllers\API\UserController;
 
 Route::post('/register',[AuthController::class, 'register']);
 Route::post('/login',[AuthController::class, 'login']);
+Route::post('/login-consultant', [AuthController::class, 'loginCon']);
 Route::post('/posts',[PostController::class, 'store']);
 Route::post('/comments', [PostController::class, 'storeComment']);
 Route::post('/consulForm', [AppointmentsController::class, 'store']);
@@ -40,4 +41,5 @@ Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:api
 
 // ini buat update dan edit user
 Route::put('/profile/update', [EditProfileController::class, 'update']);
+Route::put('/getPoint', [GameController::class, 'getPoint']);
 

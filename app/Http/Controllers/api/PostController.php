@@ -69,10 +69,10 @@ class PostController extends Controller
         ]);
         
         if ($request->hasFile('img_post')) {
-            $fileName = uniqid('post_') . '.' . $request->file('img_post')->getClientOriginalExtension();
-            $path = Storage::putFileAs('images', $request->file('img_post'), $fileName);
-                
-            $post->img_post = $path;
+            // $fileName = uniqid('post_') . '.' . $request->file('img_post')->getClientOriginalExtension();
+            $path = Storage::disk('public')->put('uploads/' . $request->file('img_post')->getClientOriginalName(), $request->file('img_post')->getContent());
+
+            $post->img_post = $path;    
             $post->save();
         }
 

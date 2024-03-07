@@ -18,7 +18,8 @@ class AuthController extends Controller
             'username' => 'required',
             'email' => 'required|email',
             'password'=>'required',
-            'confirm_password'=>'required|same:password'
+            'confirm_password'=>'required|same:password',
+            'type' => 'nullable'            
         ]);
 
 
@@ -71,6 +72,32 @@ class AuthController extends Controller
                 return response()->json([
                 'succes'=>false,
                 'message'=>'Password Salah, Cek Lagi',
+                'data'=> null
+            ]);
+        }
+
+    }
+
+    public function loginCon(Request $request){
+
+        if(Auth::attempt(['username'=> $request->username,'password' =>$request->password, 'type' => 'consultant'])){
+            $auth = Auth::user();
+            $token = $auth->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'succes' => true,
+                'message' => 'Login sukses',
+                'data' => $auth,
+                'token' => $token,
+            ])->withHeaders([
+                'X-CSRF-TOKEN' => csrf_token()
+            ]);
+
+        }else{
+
+                return response()->json([
+                'succes'=>false,
+                'message'=>'Gagal Login',
                 'data'=> null
             ]);
         }
