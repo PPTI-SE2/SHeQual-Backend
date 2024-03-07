@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace app\Http\Controllers\API;
 
 use App\Helpers\ResponseFormatter;
 use Illuminate\Http\Request;
