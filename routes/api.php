@@ -5,7 +5,7 @@ use App\Http\Controllers\API\ArticleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\api\EditProfileController;
+use App\Http\Controllers\api\EditprofileController;
 use App\Http\Controllers\API\GameController;
 use App\Http\Controllers\API\LikeController;
 use App\Http\Controllers\API\PostController;
@@ -40,6 +40,6 @@ Route::get('/consultators', [UserController::class, 'consul_index']);
 Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:api');
 
 // ini buat update dan edit user
-Route::put('/profile/update', [EditProfileController::class, 'update']);
+Route::put('/profile/update', [EditprofileController::class, 'update']);
 Route::put('/getPoint', [GameController::class, 'getPoint']);
 
