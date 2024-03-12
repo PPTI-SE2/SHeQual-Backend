@@ -21,9 +21,16 @@ class AppointmentsController extends Controller
         $app->date = $req->input('date');        
         $app->time = $req->input('time');
         $app->status = 'pending';
-        $app->save();
-        
-        return ResponseFormatter::success($app, 'mantap kali kau bg');
+        $check = Appointments::where('users_id', '=', $app->users_id)->where(function ($query) use ($app) {
+            $query->where('time', '=', $app->time)->where('date', '=', $app->date)->where('status', '=', 'pending');
+        })->get();
+
+        if(!$check){
+            $app->save();
+            return ResponseFormatter::success($app, 'mantap kali kau bg');
+        }
+
+        return ResponseFormatter::error(null, 'udah pernah request ke konsultan ini');
 
         //pending -> orderan masuk
         //confirmed -> orderan diacc consultant
@@ -36,14 +43,18 @@ class AppointmentsController extends Controller
         $date = $r->get('date');
 
         $consultantfree = User::where('type', '=', 'consultant')->where(function ($query) use ($time, $date) {
-        $query->whereDoesntHave('appointments', function ($query) use ($time, $date) {
-            $query->where('time', '=', $time)->where('date', '=', $date);
-        })->orWhereHas('appointments', function ($query) use ($time, $date) {
-            $query->where('time', '=', $time)->where('date', '=', $date)->where('status', '=', 'pending');
-        });
-    })
-    ->get();
+            $query->whereDoesntHave('appointments', function ($query) use ($time, $date) {
+                $query->where('time', '=', $time)->where('date', '=', $date);
+            })->orWhereHas('appointments', function ($query) use ($time, $date) {
+                $query->where('time', '=', $time)->where('date', '=', $date)->where('status', '=', 'pending');
+            });
+        })->get();
 
+        // $consultantfree = User::where('type', '=', 'consultant')->whereNotIn('id', function ($query) use ($time, $date) {
+        // $query->select('consultants_id')->from('appointments')
+        // ->where('time', '=', $time)->where('date', '=', $date);
+        // })->get();
+ 
         return ResponseFormatter::success($consultantfree, 'mantap kau bg');
     }
 
@@ -66,4 +77,16 @@ class AppointmentsController extends Controller
 
         return ResponseFormatter::error(null, 'poin tdk cukup');        
     }
+
+    public function consultantBooking(Request $r){
+        $userId = $r->get('consultants_id');
+        $allAppointment = Appointments::where('consultants_id', '=', $userId)->where('status', '=', 'pending')->get();
+
+        return ResponseFormatter::success($allAppointment, 'mantap');
+    }
+
+    public function consultantConfirmed(Request $r){
+
+    }
+
 }

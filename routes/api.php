@@ -40,6 +40,7 @@ Route::get('/point', [GameController::class, 'getPoint']);
 Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:api');
 Route::get('/getConsultant', [AppointmentsController::class, 'getConsultant']);
 Route::get('/userAppointment', [AppointmentsController::class, 'getAppointment']);
+Route::get('/consultantBooking', [AppointmentsController::class, 'consultantBooking']);
 
 
 Route::put('/profile/update', [EditProfileController::class, 'update']);
