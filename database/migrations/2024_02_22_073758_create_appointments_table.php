@@ -15,10 +15,10 @@ return new class extends Migration
             $table->increments('id');
             $table->bigInteger('users_id');
             $table->bigInteger('consultants_id');
-            $table->string('date');
-            $table->string('day');
+            $table->string('date');            
             $table->string('time');
             $table->string('status');
+            $table->string('message')->nullable();
             $table->timestamps();
         });
     }

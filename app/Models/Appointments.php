@@ -13,17 +13,14 @@ class Appointments extends Model
     protected $fillable =[
         'users_id',
         'consultants_id',
-        'date',
-        'day',
+        'date',        
         'time',
-        'status'    
+        'status',
+        'message'    
     ];
 
     public function user(): BelongsTo{
         return $this->belongsTo(User::class, 'users_id');
     }
 
-    public function consultants(): BelongsTo{
-        return $this->belongsTo(Consultant::class, 'consultants_id');
-    }
 }

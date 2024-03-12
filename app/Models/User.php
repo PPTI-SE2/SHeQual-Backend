@@ -60,14 +60,6 @@ class User extends Authenticatable
         return $this->hasMany(Like::class, 'users_id');
     }
 
-    public function consultants(): HasOne{
-        return $this->hasOne(Consultant::class, 'users_id', 'id');
-    }
-
-    public function user_details(): HasOne{
-        return $this->hasOne(UserDetails::class, 'users_id');
-    }
-
     public function appointments(): HasMany{
         return $this->hasMany(Appointments::class, 'users_id');
     }

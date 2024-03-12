@@ -36,10 +36,13 @@ Route::get('/articles', [ArticleController::class, 'getArticle']);
 Route::get('/games', [GameController::class, 'getGame']);
 Route::get('/posts', [PostController::class, 'showPostComment']);
 Route::get('/users', [UserController::class, 'index']);
-Route::get('/consultators', [UserController::class, 'consul_index']);
+Route::get('/point', [GameController::class, 'getPoint']);
 Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:api');
+Route::get('/getConsultant', [AppointmentsController::class, 'getConsultant']);
+Route::get('/userAppointment', [AppointmentsController::class, 'getAppointment']);
 
-// ini buat update dan edit user
+
 Route::put('/profile/update', [EditProfileController::class, 'update']);
-Route::put('/getPoint', [GameController::class, 'getPoint']);
+Route::put('/putPoint', [GameController::class, 'putPoint']);
+Route::put('/payment', [AppointmentsController::class, 'putPayAppointment']);
 

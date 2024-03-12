@@ -29,7 +29,7 @@ class GameController extends Controller
         );
       }
       
-    public function getPoint(Request $req){
+    public function putPoint(Request $req){
         $id = $req->input('user_id');
         $point = $req->input('point');
 
@@ -38,5 +38,12 @@ class GameController extends Controller
         $user->save();
 
         return ResponseFormatter::success(null, 'mantap kali kau bg');
+    }
+
+    public function getPoint(Request $r){
+        $id = $r->get('user_id');        
+        $user = User::find($id);        
+
+        return ResponseFormatter::success($user->poin, 'mantap kali kau bg');
     }
 }
