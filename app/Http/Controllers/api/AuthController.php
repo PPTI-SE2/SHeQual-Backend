@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
+use App\Models\Consultant;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
@@ -51,6 +53,21 @@ class AuthController extends Controller
 
     }
 
+    public function makeConsultator(Request $request){
+        $userId = $request->input('users_id');
+        $user = User::find($userId);
+        $user->type = 'consultant';
+        $user->save();
+
+        $consultant = new Consultant();
+        $consultant->name = $request->input('name');
+        $consultant->users_id = $userId;
+        $consultant->bio = $request->input('bio');
+        $consultant->save();
+
+        return ResponseFormatter::success($consultant, 'berhasil');
+    }
+
     public function login(Request $request){
 
         if(Auth::attempt(['email'=> $request->email,'password' =>$request->password])){
@@ -83,11 +100,12 @@ class AuthController extends Controller
         if(Auth::attempt(['username'=> $request->username,'password' =>$request->password, 'type' => 'consultant'])){
             $auth = Auth::user();
             $token = $auth->createToken('auth_token')->plainTextToken;
+            $consultant = Consultant::find($auth);
 
             return response()->json([
                 'succes' => true,
                 'message' => 'Login sukses',
-                'data' => $auth,
+                'data' => $consultant,
                 'token' => $token,
             ])->withHeaders([
                 'X-CSRF-TOKEN' => csrf_token()

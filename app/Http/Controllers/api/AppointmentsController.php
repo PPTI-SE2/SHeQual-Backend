@@ -5,10 +5,12 @@ namespace App\Http\Controllers\API;
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
 use App\Models\Appointments;
+use App\Models\Consultant;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Validator as ValidationValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class AppointmentsController extends Controller
@@ -20,6 +22,16 @@ class AppointmentsController extends Controller
         $consultants_id = $req->input('consultants_id');
         $date = $req->input('date');        
         $time = $req->input('time');
+
+        $consultant = User::find($consultants_id);
+
+        if (!$consultant) {
+        return ResponseFormatter::error(null, 'Konsultan tidak ditemukan.');
+        }        
+
+        if ($consultant->type != 'consultant') { 
+        return ResponseFormatter::error(null, 'Hanya konsultan yang bisa membuat appointment.');
+        }
 
         $check = Appointments::where('consultants_id', '=', $consultants_id)
                                 ->where('date', '=', $date)
@@ -55,21 +67,36 @@ class AppointmentsController extends Controller
             })->orWhereHas('appointments', function ($query) use ($time, $date) {
                 $query->where('time', '=', $time)->where('date', '=', $date)->where('status', '=', 'pending');
             });
-        })->get();
-
+        })->pluck('id');
+        $consultator = Consultant::with('user')->whereIn('users_id', $consultantfree)->get();
+        return ResponseFormatter::success($consultator, 'mantap kau bg');
         // $consultantfree = User::where('type', '=', 'consultant')->whereNotIn('id', function ($query) use ($time, $date) {
         // $query->select('consultants_id')->from('appointments')
         // ->where('time', '=', $time)->where('date', '=', $date);
         // })->get();
  
-        return ResponseFormatter::success($consultantfree, 'mantap kau bg');
+        
     }
 
     public function getAppointment(Request $r){ //buat liat history dari user
         $userId = $r->get('users_id');
-        $allAppointment = Appointments::where('users_id', '=', $userId)->get();
 
-        return ResponseFormatter::success($allAppointment, 'mantap');
+        $appointments = Appointments::where('users_id', '=', $userId)
+                            ->select('id', 'date', 'time', 'status', 'consultants_id')
+                            ->with('consultant')
+                            ->orderBy(DB::raw('CAST(CONCAT(date, " ", time) AS DATETIME)'), 'asc')
+                            ->get();
+
+        $transformedAppointments = $appointments->map(function ($appointment) {
+            return [
+                'id' => $appointment->id,
+                'date' => $appointment->date,
+                'time' => $appointment->time,
+                'status' => $appointment->status,
+                'consultant' => $appointment->consultant->name,
+            ];
+        });
+        return ResponseFormatter::success($transformedAppointments, 'mantap');
     }
     
     public function putPayAppointment(Request $r){
@@ -86,10 +113,6 @@ class AppointmentsController extends Controller
     }
 
     public function consultantBooking(Request $r){
-        // $userId = $r->get('consultants_id');
-        // $allAppointment = Appointments::where('consultants_id', '=', $userId)->where('status', '=', 'pending')->get();
-
-        // return ResponseFormatter::success($allAppointment, 'mantap');
         $userId = $r->get('consultants_id');
 
         $appointments = Appointments::where('consultants_id', '=', $userId)->where('status', '=', 'pending')->get()->toArray();

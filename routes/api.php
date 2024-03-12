@@ -24,6 +24,7 @@ use App\Http\Controllers\API\UserController;
 
 
 Route::post('/register',[AuthController::class, 'register']);
+Route::post('/makeConsultator', [AuthController::class, 'makeConsultator']);
 Route::post('/login',[AuthController::class, 'login']);
 Route::post('/login-consultant', [AuthController::class, 'loginCon']);
 Route::post('/posts',[PostController::class, 'store']);
