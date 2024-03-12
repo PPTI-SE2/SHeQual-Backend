@@ -49,7 +49,7 @@ class AppointmentsController extends Controller
 
     public function getAppointment(Request $r){ //buat liat history dari user
         $userId = $r->get('users_id');
-        $allAppointment = Appointments::where('users_id', '=', $userId);
+        $allAppointment = Appointments::where('users_id', '=', $userId)->get();
 
         return ResponseFormatter::success($allAppointment, 'mantap');
     }
