@@ -47,4 +47,5 @@ Route::get('/consultantBooking', [AppointmentsController::class, 'consultantBook
 Route::put('/profile/update', [EditProfileController::class, 'update']);
 Route::put('/putPoint', [GameController::class, 'putPoint']);
 Route::put('/payment', [AppointmentsController::class, 'putPayAppointment']);
+Route::put('/consultantConfirm', [AppointmentsController::class, 'consultantConfirmed']);
 

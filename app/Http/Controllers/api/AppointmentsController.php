@@ -82,7 +82,7 @@ class AppointmentsController extends Controller
         $userId = $r->get('users_id');
 
         $appointments = Appointments::where('users_id', '=', $userId)
-                            ->select('id', 'date', 'time', 'status', 'consultants_id')
+                            ->select('id', 'date', 'time', 'status', 'message', 'consultants_id')
                             ->with('consultant')
                             ->orderBy(DB::raw('CAST(CONCAT(date, " ", time) AS DATETIME)'), 'asc')
                             ->get();
@@ -93,6 +93,7 @@ class AppointmentsController extends Controller
                 'date' => $appointment->date,
                 'time' => $appointment->time,
                 'status' => $appointment->status,
+                'message' => $appointment->message,
                 'consultant' => $appointment->consultant->name,
             ];
         });
@@ -127,7 +128,31 @@ class AppointmentsController extends Controller
     }
 
     public function consultantConfirmed(Request $r){
+        $appointmentId = $r->input('appointment_id');
+        
+        $appointment = Appointments::find($appointmentId);
 
+        if ($appointment) {
+            $appointment->status = 'confirmed';
+            $appointment->save();
+            
+            $date = $appointment->date;
+            $time = $appointment->time;
+            
+            $cancelledCount = Appointments::where('date', '=', $date)
+                                ->where('time', '=', $time)
+                                ->where('id', '<>', $appointmentId)
+                                ->where('status', '!=', 'confirmed')
+                                ->update([
+                                    'status' => 'cancelled',
+                                    'message' => $r->input('message'),
+                                ]);
+
+            return ResponseFormatter::success(['confirmed' => $appointment, 'cancelled' => $cancelledCount], 'Appointments updated successfully!');
+        } else {
+            return ResponseFormatter::error(null, 'Appointment not found.');
+        }
     }
 
+    
 }
