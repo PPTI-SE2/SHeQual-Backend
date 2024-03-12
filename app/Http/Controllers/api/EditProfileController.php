@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\api;
 
 use App\Helpers\ResponseFormatter;
 use App\Http\Controllers\Controller;
@@ -8,7 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\users;
 
-class EditprofileController extends Controller
+class EditProfileController extends Controller
 {
 
    public function update(Request $request)

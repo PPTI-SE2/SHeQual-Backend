@@ -15,7 +15,7 @@ class PostController extends Controller
 {
 
     public function showPostComment(){
-        $posts = Post::with('comments.user', 'user', 'likes')->orderBy("updated_at", "DESC")->get();
+        $posts = Post::with('comments.user', 'user', 'likes')->get();
 
         $data = $posts->map(function ($post){
             return[
@@ -70,8 +70,7 @@ class PostController extends Controller
         
         if ($request->hasFile('img_post')) {
             // $fileName = uniqid('post_') . '.' . $request->file('img_post')->getClientOriginalExtension();
-            $path = Storage::disk('public')->put('uploads', $request->file('img_post'));
-            // $path = $request->file('img_post')->store('uploads', 'public');
+            $path = Storage::disk('public')->put('uploads/' . $request->file('img_post')->getClientOriginalName(), $request->file('img_post')->getContent());
 
             $post->img_post = $path;    
             $post->save();
