@@ -16,21 +16,28 @@ class AppointmentsController extends Controller
     public function store(Request $req){
         $app = new Appointments();
 
-        $app->users_id = $req->input('users_id');
-        $app->consultants_id = $req->input('consultants_id');
-        $app->date = $req->input('date');        
-        $app->time = $req->input('time');
-        $app->status = 'pending';
-        $check = Appointments::where('users_id', '=', $app->users_id)->where(function ($query) use ($app) {
-            $query->where('time', '=', $app->time)->where('date', '=', $app->date)->where('status', '=', 'pending');
-        })->get();
+        $users_id = $req->input('users_id');
+        $consultants_id = $req->input('consultants_id');
+        $date = $req->input('date');        
+        $time = $req->input('time');
 
-        if(!$check){
+        $check = Appointments::where('consultants_id', '=', $consultants_id)
+                                ->where('date', '=', $date)
+                                ->where('time', '=', $time)
+                                ->where('status', '=', 'pending')
+                                ->where('users_id', '=', $users_id)->get();
+        
+        if($check == null){
+            $app->users_id = $req->input('users_id');
+            $app->consultants_id = $req->input('consultants_id');
+            $app->date = $req->input('date');        
+            $app->time = $req->input('time');
+            $app->status = 'pending';
             $app->save();
             return ResponseFormatter::success($app, 'mantap kali kau bg');
         }
 
-        return ResponseFormatter::error(null, 'udah pernah request ke konsultan ini');
+        return ResponseFormatter::error($check, 'udah pernah request ke konsultan ini');
 
         //pending -> orderan masuk
         //confirmed -> orderan diacc consultant
@@ -79,10 +86,21 @@ class AppointmentsController extends Controller
     }
 
     public function consultantBooking(Request $r){
-        $userId = $r->get('consultants_id');
-        $allAppointment = Appointments::where('consultants_id', '=', $userId)->where('status', '=', 'pending')->get();
+        // $userId = $r->get('consultants_id');
+        // $allAppointment = Appointments::where('consultants_id', '=', $userId)->where('status', '=', 'pending')->get();
 
-        return ResponseFormatter::success($allAppointment, 'mantap');
+        // return ResponseFormatter::success($allAppointment, 'mantap');
+        $userId = $r->get('consultants_id');
+
+        $appointments = Appointments::where('consultants_id', '=', $userId)->where('status', '=', 'pending')->get()->toArray();
+        $groupedAppointments = array_reduce($appointments, function ($carry, $appointment) {
+            $date = date('Y-m-d', strtotime($appointment['date']));
+            $time = $appointment['time'];
+            $carry[$date][$time][] = $appointment;
+            return $carry;
+        }, []);
+
+        return ResponseFormatter::success($groupedAppointments, 'mantap');
     }
 
     public function consultantConfirmed(Request $r){
