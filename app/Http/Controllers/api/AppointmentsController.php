@@ -35,10 +35,16 @@ class AppointmentsController extends Controller
         $time = $r->get('time');
         $date = $r->get('date');
 
-        $appoint = Appointments::where('time', '=', $time)->where('date', '=', $date)->whereIn('status', ['confirmed', 'done'])->pluck('consultants_id');
-        $consultantfree = User::where('type', '=', 'consultant')->where('id', '!=', $appoint)->get();
+        $consultantfree = User::where('type', '=', 'consultant')->where(function ($query) use ($time, $date) {
+        $query->whereDoesntHave('appointments', function ($query) use ($time, $date) {
+            $query->where('time', '=', $time)->where('date', '=', $date);
+        })->orWhereHas('appointments', function ($query) use ($time, $date) {
+            $query->where('time', '=', $time)->where('date', '=', $date)->where('status', '=', 'pending');
+        });
+    })
+    ->get();
 
-        return ResponseFormatter::success($appoint, 'mantap kau bg');
+        return ResponseFormatter::success($consultantfree, 'mantap kau bg');
     }
 
     public function getAppointment(Request $r){ //buat liat history dari user

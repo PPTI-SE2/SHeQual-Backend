@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigInteger('consultants_id');
             $table->string('date');            
             $table->string('time');
-            $table->string('status');
+            $table->string('status')->nullable();
             $table->string('message')->nullable();
             $table->timestamps();
         });
