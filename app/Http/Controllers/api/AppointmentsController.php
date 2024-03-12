@@ -27,7 +27,7 @@ class AppointmentsController extends Controller
                                 ->where('status', '=', 'pending')
                                 ->where('users_id', '=', $users_id)->get();
         
-        if($check == null){
+        if($check->isEmpty()){
             $app->users_id = $req->input('users_id');
             $app->consultants_id = $req->input('consultants_id');
             $app->date = $req->input('date');        
