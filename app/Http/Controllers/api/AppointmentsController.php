@@ -92,13 +92,13 @@ class AppointmentsController extends Controller
     
     public function putPayAppointment(Request $r){
         $appointmentId = $r->input('appointment_id');
-        $appointment = Appointments::find($appointmentId)->get();
-
-        $userId = $appointment->users_id;
+        $appointment = Appointments::where('id', '=', $appointmentId)->first();     
+        
+        $userId = $appointment->users_id;        
         $consultantId = $appointment->consultants_id;
 
-        $user = User::find($userId)->get();
-        $consultant = User::find($consultantId)->get();
+        $user = User::where('id', '=', $userId)->first();
+        $consultant = User::where('id', '=', $consultantId)->first();
 
         if($user->poin >= 100){
             $user->poin-=100;
@@ -115,7 +115,7 @@ class AppointmentsController extends Controller
 
     public function cancellAppointment(Request $r){
         $appointmentId = $r->input('appointment_id');
-        $appointment = Appointments::find($appointmentId)->get();
+        $appointment = Appointments::where('id', '=', $appointmentId)->first();
 
         $appointment->status = 'cancelled';
         $appointment->save();
