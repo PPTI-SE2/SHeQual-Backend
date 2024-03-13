@@ -123,6 +123,13 @@ class AppointmentsController extends Controller
         return ResponseFormatter::success($appointment, 'sudah');
     }
 
+    public function isBayar(Request $r){
+        $appId = $r->get('appointment_id');
+        $app = Appointments::where('id', '=', $appId)->first();
+        
+        return ResponseFormatter::success($app->isBayar, 'done');
+    }
+
     public function consultantBooking(Request $r){
         $userId = $r->get('consultants_id');
         $currentTime = now();
