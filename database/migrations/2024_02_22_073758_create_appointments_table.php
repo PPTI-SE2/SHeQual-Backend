@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('time');
             $table->string('status')->nullable();
             $table->string('message')->nullable();
+            $table->boolean('isBayar')->default(false);
             $table->timestamps();
         });
     }

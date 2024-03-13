@@ -42,10 +42,12 @@ Route::get('/profile', [UserController::class, 'profile'])->middleware('auth:api
 Route::get('/getConsultant', [AppointmentsController::class, 'getConsultant']);
 Route::get('/userAppointment', [AppointmentsController::class, 'getAppointment']);
 Route::get('/consultantBooking', [AppointmentsController::class, 'consultantBooking']);
+Route::get('/mentalList', [AppointmentsController::class, 'mentalList']);
 
 
 Route::put('/profile/update', [EditProfileController::class, 'update']);
 Route::put('/putPoint', [GameController::class, 'putPoint']);
 Route::put('/payment', [AppointmentsController::class, 'putPayAppointment']);
 Route::put('/consultantConfirm', [AppointmentsController::class, 'consultantConfirmed']);
+Route::put('/cancellAppointment', [AppointmentsController::class, 'cancellAppointment']);
 

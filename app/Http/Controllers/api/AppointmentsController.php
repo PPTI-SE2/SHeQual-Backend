@@ -30,7 +30,7 @@ class AppointmentsController extends Controller
         }        
 
         if ($consultant->type != 'consultant') { 
-        return ResponseFormatter::error(null, 'Hanya konsultan yang bisa membuat appointment.');
+        return ResponseFormatter::error(null, 'Hanya dengan konsultant bisa membuat appointment.');
         }
 
         $check = Appointments::where('consultants_id', '=', $consultants_id)
@@ -50,11 +50,6 @@ class AppointmentsController extends Controller
         }
 
         return ResponseFormatter::error($check, 'udah pernah request ke konsultan ini');
-
-        //pending -> orderan masuk
-        //confirmed -> orderan diacc consultant
-        //done -> orderan selesai
-        //cancelled -> dicancel consultant
     }
 
     public function getConsultant(Request $r){
@@ -69,16 +64,11 @@ class AppointmentsController extends Controller
             });
         })->pluck('id');
         $consultator = Consultant::with('user')->whereIn('users_id', $consultantfree)->get();
+
         return ResponseFormatter::success($consultator, 'mantap kau bg');
-        // $consultantfree = User::where('type', '=', 'consultant')->whereNotIn('id', function ($query) use ($time, $date) {
-        // $query->select('consultants_id')->from('appointments')
-        // ->where('time', '=', $time)->where('date', '=', $date);
-        // })->get();
- 
-        
     }
 
-    public function getAppointment(Request $r){ //buat liat history dari user
+    public function getAppointment(Request $r){
         $userId = $r->get('users_id');
 
         $appointments = Appointments::where('users_id', '=', $userId)
@@ -101,30 +91,66 @@ class AppointmentsController extends Controller
     }
     
     public function putPayAppointment(Request $r){
-        $id = $r->input('user_id');
-        $user = User::find($id);
-        
+        $appointmentId = $r->input('appointment_id');
+        $appointment = Appointments::find($appointmentId)->get();
+
+        $userId = $appointment->users_id;
+        $consultantId = $appointment->consultants_id;
+
+        $user = User::find($userId)->get();
+        $consultant = User::find($consultantId)->get();
+
         if($user->poin >= 100){
             $user->poin-=100;
+            $consultant->poin+=100;
+            $appointment->isBayar = true;
             $user->save();
-            return ResponseFormatter::success(null, 'mantap');
+            $appointment->save();
+            $consultant->save();
+            return ResponseFormatter::success($appointment, 'success bang mantap');
         }
 
-        return ResponseFormatter::error(null, 'poin tdk cukup');        
+        return ResponseFormatter::error(null, 'poin kau miskin kali bang');
+    }
+
+    public function cancellAppointment(Request $r){
+        $appointmentId = $r->input('appointment_id');
+        $appointment = Appointments::find($appointmentId)->get();
+
+        $appointment->status = 'cancelled';
+        $appointment->save();
+
+        return ResponseFormatter::success($appointment, 'sudah');
     }
 
     public function consultantBooking(Request $r){
         $userId = $r->get('consultants_id');
+        $currentTime = now();
 
-        $appointments = Appointments::where('consultants_id', '=', $userId)->where('status', '=', 'pending')->get()->toArray();
-        $groupedAppointments = array_reduce($appointments, function ($carry, $appointment) {
+        $appointments = Appointments::where('consultants_id', '=', $userId)
+                            ->where('status', '=', 'pending')
+                            ->where('date', '<', $currentTime->format('Y-m-d'))
+                            ->orWhere(function ($query) use ($currentTime, $userId) {
+                            $query->where('date', '=', $currentTime->format('Y-m-d'))
+                                    ->where('time', '<', $currentTime->format('H:i'))
+                                    ->where('status', '=', 'pending');
+                            })
+                            ->update(['status' => 'cancelled', 'message' => 'Consultant tidak menanggapi appoinment anda']);
+
+
+        $groupedAppointments = Appointments::where('consultants_id', '=', $userId)
+                            ->where('status', '=', 'pending')
+                            ->get()->toArray();
+
+        $groupedAppointments = array_reduce($groupedAppointments, function ($carry, $appointment) {
             $date = date('Y-m-d', strtotime($appointment['date']));
             $time = $appointment['time'];
             $carry[$date][$time][] = $appointment;
             return $carry;
         }, []);
 
-        return ResponseFormatter::success($groupedAppointments, 'mantap');
+        return ResponseFormatter::success($groupedAppointments, 'panik kau dek');
+
     }
 
     public function consultantConfirmed(Request $r){
@@ -133,7 +159,7 @@ class AppointmentsController extends Controller
         $appointment = Appointments::find($appointmentId);
 
         if ($appointment) {
-            $appointment->status = 'confirmed';
+            $appointment->status = 'accept';
             $appointment->save();
             
             $date = $appointment->date;
@@ -142,16 +168,43 @@ class AppointmentsController extends Controller
             $cancelledCount = Appointments::where('date', '=', $date)
                                 ->where('time', '=', $time)
                                 ->where('id', '<>', $appointmentId)
-                                ->where('status', '!=', 'confirmed')
+                                ->where('status', '!=', 'accept')
                                 ->update([
                                     'status' => 'cancelled',
                                     'message' => $r->input('message'),
                                 ]);
 
-            return ResponseFormatter::success(['confirmed' => $appointment, 'cancelled' => $cancelledCount], 'Appointments updated successfully!');
+            return ResponseFormatter::success(['accept' => $appointment, 'cancelled' => $cancelledCount], 'Appointments updated successfully!');
         } else {
             return ResponseFormatter::error(null, 'Appointment not found.');
         }
+    }
+
+    public function mentalList(Request $r){
+        $userId = $r->get('consultants_id');
+        $currentTime = now();
+
+        $appointments = Appointments::where('consultants_id', '=', $userId)
+                            ->where('status', '=', 'accept')->where('isBayar', '=', true)
+                            ->where('date', '<', $currentTime->format('Y-m-d'))
+                            ->orWhere(function ($query) use ($currentTime, $userId) {
+                            $query->where('date', '=', $currentTime->format('Y-m-d'))
+                                    ->where('time', '<', $currentTime->format('H:i'));
+                            })
+                            ->update(['status' => 'done']);
+
+        $groupedAppointments = Appointments::where('consultants_id', '=', $userId)
+                            ->where('status', '=', 'accept')->where('isBayar', '=', true)
+                            ->get()->toArray();
+                                                        
+        $groupedAppointments = array_reduce($groupedAppointments, function ($carry, $appointment) {
+            $date = date('Y-m-d', strtotime($appointment['date']));
+            $time = $appointment['time'];
+            $carry[$date][$time][] = $appointment;
+            return $carry;
+        }, []);
+
+        return ResponseFormatter::success($groupedAppointments, 'panik kau dek');
     }
 
     
