@@ -23,7 +23,7 @@ class AppointmentsController extends Controller
         $date = $req->input('date');        
         $time = $req->input('time');
 
-        $consultant = User::find($consultants_id);
+        $consultant = User::where('id', '=', $consultants_id)->first();
 
         if (!$consultant) {
         return ResponseFormatter::error(null, 'Konsultan tidak ditemukan.');
@@ -121,6 +121,13 @@ class AppointmentsController extends Controller
         $appointment->save();
 
         return ResponseFormatter::success($appointment, 'sudah');
+    }
+
+    public function isBayar(Request $r){
+        $appId = $r->get('appointment_id');
+        $app = Appointments::where('id', '=', $appId)->first();
+        
+        return ResponseFormatter::success($app->isBayar, 'done');
     }
 
     public function consultantBooking(Request $r){

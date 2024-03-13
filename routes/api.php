@@ -43,7 +43,7 @@ Route::post('/getConsultant', [AppointmentsController::class, 'getConsultant']);
 Route::get('/userAppointment', [AppointmentsController::class, 'getAppointment']);
 Route::get('/consultantBooking', [AppointmentsController::class, 'consultantBooking']);
 Route::get('/mentalList', [AppointmentsController::class, 'mentalList']);
-
+Route::get('/isBayar', [AppointmentsController::class, 'isBayar']);
 
 Route::put('/profile/update', [EditProfileController::class, 'update']);
 Route::put('/putPoint', [GameController::class, 'putPoint']);
