@@ -23,7 +23,7 @@ class AppointmentsController extends Controller
         $date = $req->input('date');        
         $time = $req->input('time');
 
-        $consultant = User::find($consultants_id);
+        $consultant = User::where('id', '=', $consultants_id)->first();
 
         if (!$consultant) {
         return ResponseFormatter::error(null, 'Konsultan tidak ditemukan.');
