@@ -15,7 +15,7 @@ class PostController extends Controller
 {
 
     public function showPostComment(){
-        $posts = Post::with('comments.user', 'user', 'likes')->get();
+        $posts = Post::with('comments.user', 'user', 'likes')->orderBy("created_at", "DESC")->get();
 
         $data = $posts->map(function ($post){
             return[
@@ -46,30 +46,33 @@ class PostController extends Controller
     }
 
     public function store(Request $request)
-    {        
+    {
+        //define validation rules
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'title' => 'required',
             'content' => 'required',
             'img_post' => 'nullable|image'
         ]);
-        
+
+        //check if validation fails
         if ($validator->fails()) {
             return ResponseFormatter::error($validator->errors(), 'ditolak validasi', 422);
         }
 
+        //create post
         $post = Post::create([
             'users_id'  => $request->user_id,            
             'title'     => $request->title,
-            'content'   => $request->content,            
+            'content'   => $request->content,
+            'img_post'  => $request->img_post
         ]);
         
-        // if ($request->hasFile('img_post')) {            
-        //     $path = Storage::put
-
-        //     $post->img_post = $path;                
-        // }
-        $post->save();
+        if ($request->hasFile('img_post')) {
+            $path = Storage::disk('public')->put('uploads', $request->file('img_post'));
+            $post->img_post = basename($path);    
+            $post->save();
+        }
 
         return ResponseFormatter::success($post, 'sukses bro');        
     }

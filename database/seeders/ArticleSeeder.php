@@ -2,17 +2,17 @@
 
 namespace Database\Seeders;
 
-use App\Models\Consultant;
+use App\Models\Article;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ConsultantSeeder extends Seeder
+class ArticleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        // Consultant::factory(10)->create();
+        Article::factory(50)->create();
     }
 }
